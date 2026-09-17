@@ -1,0 +1,13 @@
+{
+  "name": "loftet-isolated-atproto-sandbox",
+  "private": true,
+  "type": "module",
+  "dependencies": { "@atproto/dev-env": "0.6.7" },
+  "scripts": {
+    "up": "docker compose up -d --build --wait",
+    "down": "docker compose down",
+    "logs": "docker compose logs --tail=50 -f atproto",
+    "verify": "./verify.sh",
+    "test": "node smoke-test.mjs"
+  }
+}

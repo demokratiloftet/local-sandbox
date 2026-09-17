@@ -1,0 +1,49 @@
+name: loftet-isolated-sandbox
+services:
+  atproto:
+    build: .
+    image: loftet-isolated-sandbox-atproto
+    init: true
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [NET_ADMIN, SETUID, SETGID, SETPCAP]
+    security_opt: [no-new-privileges:true]
+    networks:
+      isolated:
+        ipv4_address: 172.30.83.2
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=512m,mode=1777
+    healthcheck:
+      test: [CMD, node, -e, "require('fs').accessSync('/tmp/sandbox-accounts.json');fetch('http://127.0.0.1:2583/xrpc/_health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: "no"
+  gateway:
+    image: loftet-isolated-sandbox-atproto
+    command: [gateway]
+    init: true
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [NET_ADMIN, SETUID, SETGID, SETPCAP]
+    security_opt: [no-new-privileges:true]
+    depends_on:
+      atproto:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:2583:2583"
+      - "127.0.0.1:2582:2582"
+    networks: [isolated, ingress]
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:2583/xrpc/_health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: "no"
+networks:
+  isolated:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.30.83.0/24
+  ingress: {}

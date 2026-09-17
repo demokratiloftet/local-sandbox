@@ -1,0 +1,7 @@
+*
+!package.json
+!package-lock.json
+!server.mjs
+!gateway.mjs
+!entrypoint.sh
+!isolation-test.mjs
