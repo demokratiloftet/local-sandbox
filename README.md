@@ -17,7 +17,7 @@ the demo server by changing its service URL — not its code.
 
 ## What exists now
 
-- A real reference PDS and a local PLC directory, from `@atproto/dev-env` 0.6.7.
+- A real reference PDS and a local PLC directory, from `@atproto/dev-env` 0.6.14.
 - Two synthetic accounts, `organiser.test` and `issuer.test`, both with the
   password `local-sandbox-only`. They are disposable fixtures, not secrets.
 - PDS: <http://127.0.0.1:2583> (an XRPC API, not a social-media interface).
@@ -25,17 +25,20 @@ the demo server by changing its service URL — not its code.
 - `sandbox.mjs`, a command-line helper for posting and listing records.
 - Functional and isolation checks.
 
-This is the protocol foundation. The issuer application, NIF/BankID connections,
-OIDC demo provider, verification library and activity calendar are **not**
-implemented yet. The helper uses local password sessions, not the application
-OAuth flow those will need.
+This is the protocol foundation. The [calendar](https://github.com/demokratiloftet/calendar-app),
+[identity component](https://github.com/demokratiloftet/identity-component), and
+[attestation issuer](https://github.com/demokratiloftet/attestation-issuer) are
+separate projects. The calendar provides the synthetic OIDC provider and an
+OAuth application flow. No real NIF/BankID integration is activated here.
 
 ## Start, connect, post, stop
 
-Prerequisites: Docker with Compose, and Node.js 22 or newer. No host
+Prerequisites: Docker with Compose, and Node.js 22.19 or newer. No host
 `npm install` is needed to use the helper — it only uses `fetch`.
 
 ```sh
+gh repo clone demokratiloftet/local-sandbox
+cd local-sandbox
 npm run up                                     # docker compose up -d --build --wait
 npm run verify                                 # isolation + functional checks
 node sandbox.mjs accounts
@@ -105,9 +108,13 @@ publish the gateway on `0.0.0.0`, register these test identities in the public
 PLC, or expose them through a public tunnel. Run `./verify.sh` after any
 infrastructure change, and do not mount private files into the containers.
 
-The upstream development dependencies carry `npm audit` findings. This is a
-restricted development fixture, not a production service; updating or replacing
-those dependencies needs compatibility testing first.
+Dependency maintenance on 2026-10-07 updated dev-env to 0.6.14 and pins patched
+transitive packages in `package.json` overrides. `npm audit` reports zero known
+vulnerabilities for this lockfile. The upgraded PDS was tested with real account
+creation, records, calendar authorization, identity provisioning and isolation.
+The overrides include major versions for unused telemetry/mail/image paths;
+those paths are not enabled or compatibility-certified by this fixture. Recheck
+the audit and integration suite before enabling additional upstream features.
 
 ## Verification
 

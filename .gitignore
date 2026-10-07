@@ -12,3 +12,12 @@ verification-results.txt
 
 # macOS
 .DS_Store
+
+# Private operator state and audit output
+.secrets/
+.runtime/
+*.sqlite*
+*.pem
+*.key
+*.log
+.DS_Store
