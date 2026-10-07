@@ -3,17 +3,24 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@atproto/dev-env": "0.6.14"
+    "@atproto/dev-env": "0.6.14",
+    "zod": "4.6.5"
   },
   "scripts": {
     "up": "docker compose up -d --build --wait",
     "down": "docker compose down",
     "logs": "docker compose logs --tail=50 -f atproto",
     "verify": "./verify.sh",
-    "test": "node smoke-test.mjs"
+    "test": "node dist/smoke-test.js",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "pretest": "npm run build",
+    "preverify": "npm run build",
+    "format": "prettier --write *.ts",
+    "format:check": "prettier --check *.ts"
   },
   "engines": {
-    "node": ">=22.19"
+    "node": ">=24.17 <25"
   },
   "overrides": {
     "@fastify/busboy": "3.2.2",
@@ -30,5 +37,10 @@
     "@opentelemetry/instrumentation-oracledb": "0.46.0",
     "@opentelemetry/instrumentation-pg": "0.73.0",
     "@opentelemetry/instrumentation-tedious": "0.40.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.1",
+    "typescript": "7.0.2",
+    "prettier": "3.9.9"
   }
 }

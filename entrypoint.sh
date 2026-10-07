@@ -17,9 +17,9 @@ iptables -I OUTPUT 1 -d 127.0.0.11 -j REJECT
 # TCP gateway handles ingress; its only non-loopback outbound target is this PDS.
 if [ "${1:-}" = gateway ]; then
   iptables -A OUTPUT -d 172.30.83.2 -p tcp -m multiport --dports 2582,2583 -j ACCEPT
-  program=/sandbox/gateway.mjs
+  program=/sandbox/dist/gateway.js
 else
-  program=/sandbox/server.mjs
+  program=/sandbox/dist/server.js
 fi
 # The app cannot alter these rules. Privileges are used only during bootstrap.
 exec setpriv --reuid=node --regid=node --init-groups \

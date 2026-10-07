@@ -21,3 +21,6 @@ verification-results.txt
 *.key
 *.log
 .DS_Store
+
+# Compiled TypeScript
+dist/

@@ -23,6 +23,9 @@ jobs:
           node-version: '24.17.0'
       - name: Scan Git history for secrets
         run: bash .github/scripts/scan-secrets.sh
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run format:check
       - run: npm audit --audit-level=moderate
       - run: npm run up
       - run: npm run verify

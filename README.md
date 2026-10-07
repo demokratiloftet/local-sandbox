@@ -22,7 +22,7 @@ the demo server by changing its service URL — not its code.
   password `local-sandbox-only`. They are disposable fixtures, not secrets.
 - PDS: <http://127.0.0.1:2583> (an XRPC API, not a social-media interface).
 - PLC: <http://127.0.0.1:2582> (local DID resolution).
-- `sandbox.mjs`, a command-line helper for posting and listing records.
+- `sandbox.ts`, a command-line helper for posting and listing records.
 - Functional and isolation checks.
 
 This is the protocol foundation. The [calendar](https://github.com/demokratiloftet/calendar-app),
@@ -33,17 +33,19 @@ OAuth application flow. No real NIF/BankID integration is activated here.
 
 ## Start, connect, post, stop
 
-Prerequisites: Docker with Compose, and Node.js 22.19 or newer. No host
-`npm install` is needed to use the helper — it only uses `fetch`.
+Prerequisites: Docker with Compose, and Node.js 24.17 (see `.node-version`). Maintained source, helpers and
+checks use strict TypeScript; containers run the compiled JavaScript in `dist/`.
 
 ```sh
 gh repo clone demokratiloftet/local-sandbox
 cd local-sandbox
+npm ci
+npm run build
 npm run up                                     # docker compose up -d --build --wait
 npm run verify                                 # isolation + functional checks
-node sandbox.mjs accounts
-node sandbox.mjs post "This stays in my local sandbox"
-node sandbox.mjs list
+node dist/sandbox.js accounts
+node dist/sandbox.js post "This stays in my local sandbox"
+node dist/sandbox.js list
 npm run down                                   # stops only this project
 ```
 
@@ -62,11 +64,11 @@ along with their signing keys — deliberate later work.
 
 ## Using it from an app
 
-`sandbox.mjs` is importable as well as runnable, so a prototype can drive the
+`sandbox.ts` is importable as well as runnable, so a prototype can drive the
 sandbox directly:
 
-```js
-import { login, post, list, rpc } from './sandbox.mjs'
+```ts
+import { login, post, list, rpc } from './sandbox.ts'
 ```
 
 For anything larger, point a normal AT Protocol client
@@ -90,7 +92,7 @@ to change when you move to the demo server.
 5. Node runs as an unprivileged user with all capabilities removed.
 6. No Docker socket and no private host directories are mounted.
 7. DIDs are registered in the local PLC. The public crawler list is empty.
-8. `sandbox.mjs` has a hardcoded local target and rejects non-fixture handles,
+8. `sandbox.ts` has a hardcoded local target and rejects non-fixture handles,
    so it cannot be pointed at production by accident.
 
 Downloads happen at image build time; runtime test data is created only after
@@ -118,11 +120,13 @@ the audit and integration suite before enabling additional upstream features.
 
 ## Verification
 
-`./verify.sh` runs, in order:
+`npm run typecheck` checks every maintained TypeScript file. `npm run format:check`
+checks formatting. CI builds and starts a fresh disposable environment, then runs
+`./verify.sh`, which compiles the checks and runs, in order:
 
-- `isolation-test.mjs` inside both containers — outbound IPv4/IPv6 and DNS are
+- `isolation-test.ts` inside both containers — outbound IPv4/IPv6 and DNS are
   blocked, local PDS/PLC reachable, processes hold no capabilities.
-- `smoke-test.mjs` from the host — create, read and delete a real PDS record,
+- `smoke-test.ts` from the host — create, read and delete a real PDS record,
   and resolve its DID in the local PLC.
 - `docker inspect` assertions — internal-only backend network, no published
   backend ports, loopback-only gateway bindings, read-only root filesystems, no
@@ -172,11 +176,11 @@ public exposure and is out of scope.
 
 | File | Purpose |
 |---|---|
-| `server.mjs` | Boots the PDS + PLC and seeds the two fixture accounts |
-| `gateway.mjs` | Fixed TCP ingress from host loopback to the internal network |
-| `sandbox.mjs` | CLI and importable helper: `accounts`, `post`, `list` |
-| `smoke-test.mjs` | Functional check against the running PDS/PLC |
-| `isolation-test.mjs` | In-container egress, DNS and capability checks |
+| `server.ts` | Boots the PDS + PLC and seeds the two fixture accounts |
+| `gateway.ts` | Fixed TCP ingress from host loopback to the internal network |
+| `sandbox.ts` | CLI and importable helper: `accounts`, `post`, `list` |
+| `smoke-test.ts` | Functional check against the running PDS/PLC |
+| `isolation-test.ts` | In-container egress, DNS and capability checks |
 | `verify.sh` | Runs all checks plus `docker inspect` assertions |
 | `entrypoint.sh` | Installs firewall rules, then drops privileges |
 | `compose.yml`, `Dockerfile` | Container and network definition |

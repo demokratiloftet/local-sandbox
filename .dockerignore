@@ -1,7 +1,6 @@
 *
 !package.json
 !package-lock.json
-!server.mjs
-!gateway.mjs
+!*.ts
+!tsconfig.json
 !entrypoint.sh
-!isolation-test.mjs
