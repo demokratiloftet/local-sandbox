@@ -1,6 +1,7 @@
 # Sandbox constraints
 
-This project is a strictly private development sandbox. Preserve that boundary.
+The source repository is public. The running development sandbox must remain
+private and reachable only through host loopback. Preserve that network boundary.
 
 - Never use public AT Protocol accounts, public PLC registration, public relays,
   public tunnels, or Tailscale Funnel for sandbox content.

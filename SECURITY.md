@@ -1,20 +1,22 @@
 # Security and maintenance
 
-These are synthetic-data demos. A passing audit is not a guarantee of security.
-Do not put personal data or real identity evidence in the fixtures. Private
-GitHub visibility does not make committed credentials safe.
+This is a disposable local development fixture. Use only synthetic identities and
+data. The shared `local-sandbox-only` fixture password is intentionally public;
+it must never be reused for another service.
 
-- Report suspected vulnerabilities privately to an organisation maintainer.
-  Do not include tokens, passwords, private keys, database contents or personal
-  information in an issue or pull request.
-- Keep environment files, runtime accounts, signing keys and databases out of
-  Git and Docker build contexts. Back up persistent data together with its keys.
-- Run the README checks before merging. CI tests changes and scans full Git
-  history for secrets. Dependencies and Actions are checked weekly by Dependabot.
-- Authentication, identity links and handle ownership do not grant membership.
-  Check authorization at the point of access and fail closed on upstream failure.
-- Preserve isolation tests, synthetic identities and pinned image digests.
-  Never use `down -v` on a shared deployment. PDS upgrades need a backup and
-  migration review; do not automatically roll out an alpha database upgrade.
+- Report suspected vulnerabilities privately to a repository maintainer. Do not
+  include real credentials, private keys or personal data in public issues.
+- Keep environment files, signing keys, databases and runtime output out of Git
+  and Docker build contexts.
+- Preserve loopback-only host ports, outbound firewall rules, internal networks,
+  unprivileged processes and pinned image digests. Never mount the Docker socket
+  or private host files in the fixture.
+- Run the README checks before merging. CI scans Git history for secrets and
+  verifies the fixture. Dependabot checks dependencies and Actions weekly.
+- The public source repository does not publish running PDS instances. Local
+  clients can read fixture records. Keep the runtime isolated and use a separate
+  deployment for public services.
+- Warn users before restarting an environment they rely on: fixture accounts,
+  DIDs and records are deliberately reset on every restart.
 
-See the README for this repository's specific deployment and trust boundaries.
+See the README for setup, verification and current limitations.
