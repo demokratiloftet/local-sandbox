@@ -137,3 +137,7 @@ JavaScript from `dist/`.
 
 Built with [`@atproto/dev-env`](https://github.com/bluesky-social/atproto/tree/main/packages/dev-env).
 See also the [AT Protocol development guide](https://github.com/bluesky-social/atproto/blob/main/CONTRIBUTING.md).
+
+## License
+
+Licensed under [MIT](LICENSE).
